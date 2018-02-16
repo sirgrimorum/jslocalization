@@ -1,0 +1,32 @@
+{
+    "name": "sigrimorum/jslocalization",
+    "description": "Put localization translations in js",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "sirgrimorum",
+            "email": "andres.espinosa@grimorum.com"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {
+        "php": ">=7.0",
+        "laravel/framework": ">=5.4"
+    },
+    "autoload": {
+        "psr-4": {
+            "sirgrimorum\\jslocalization\\": "src"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Sirgrimorum\\JSLocalization\\JSLocalizationServiceProvider"
+            ],
+            "aliases": {
+                "JSLocalization": "Sirgrimorum\\JSLocalization\\JSLocalizationFacade"
+            }
+        }
+    }
+}
