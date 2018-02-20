@@ -19,10 +19,23 @@ class JSLocalizationServiceProvider extends ServiceProvider {
             __DIR__ . '/Config/jslocalization.php' => config_path('sirgrimorum/jslocalization.php'),
                 ], 'config');
 
-        Blade::directive('translation_get', function($expression) {
-            list($langfile, $group) = explode(',', str_replace(['(', ')', ' ', '"', "'"], '', $expression));
-            $translations = new \Sirgrimorum\Cms\Translations\BindTranslationsToJs($this->app, config('sirgrimorum_cms.bind_trans_vars_to_this_view', 'welcome'), config('sirgrimorum_cms.trans_group', 'mensajes'), config('sirgrimorum_cms.default_base_var', 'translations'));
-            return $translations->get($langfile, $group);
+        Blade::directive('jslocalization', function($expression) {
+            $auxExpression = explode(',', str_replace(['(', ')', ' ', '"', "'"], '', $expression));
+            if (count($auxExpression)>2){
+                $langfile=$auxExpression[0];
+                $group=$auxExpression[1];
+                $basevar=$auxExpression[2];
+            } elseif (count($auxExpression)>1){
+                $langfile=$auxExpression[0];
+                $group=$auxExpression[1];
+                $basevar = "";
+            }else{
+                $langfile=$auxExpression[0];
+                $group="";
+                $basevar = "";
+            }
+            $translations = new \Sirgrimorum\JSLocalization\BindTranslationsToJs($this->app, config('sirgrimorum.jslocalization.bind_trans_vars_to_this_view', 'layout.app'), config('sirgrimorum.jslocalization.trans_group', 'messages'), config('sirgrimorum.jslocalization.default_base_var', 'translations'));
+            return $translations->get($langfile, $group, $basevar);
         });
     }
 
@@ -40,9 +53,9 @@ class JSLocalizationServiceProvider extends ServiceProvider {
             return new BindTranslationsToJs($app, $view, $group, $basevar);
         });
         $loader = AliasLoader::getInstance();
-            $loader->alias(
-                    'JSLocalization', \Sirgrimorum\JSLocalization\BindTranslationsToJs::class
-            );
+        $loader->alias(
+                'JSLocalization', \Sirgrimorum\JSLocalization\BindTranslationsToJs::class
+        );
         //$this->app->alias(BindTranslationsToJs::class, 'JSLocalization');
         $this->mergeConfigFrom(
                 __DIR__ . '/Config/jslocalization.php', 'sirgrimorum.jslocalization'
