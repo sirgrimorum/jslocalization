@@ -1,5 +1,6 @@
 {
-    "name": "sigrimorum/jslocalization",
+    "name": "sirgrimorum/jslocalization",
+    "type": "library",
     "description": "Put localization translations in js",
     "type": "library",
     "license": "MIT",

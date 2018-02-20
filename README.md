@@ -14,7 +14,7 @@ Put localization arrays in JavaScript for Laravel 5.6.
 Via Composer
 
 ``` bash
-$ composer require sirgrimorum/JSLocalization
+$ composer require sirgrimorum/jslocalization
 ```
 Publish Configuration
 
