@@ -4,7 +4,9 @@ namespace Sirgrimorum\JSLocalization;
 
 use Illuminate\Events\Dispatcher;
 use Illuminate\Filesystem\Filesystem;
+use Illuminate\Support\Facades\Event;
 use Exception;
+use App;
 
 class BindTranslationsToJs {
 
@@ -52,49 +54,29 @@ class BindTranslationsToJs {
     }
 
     /**
-     * Bind the given JavaScript to the
-     * view using Laravel event listeners
-     *
-     * @param $langfile The language file to load
-     */
-    public function put($langfile) {
-        $lang = $this->app->getLocale();
-        $file = new Filesystem();
-        $langPath = config("sirgrimorum.jslocalization.default_lang_path");
-        $transP = $file->getRequire(base_path() . str_start(str_finish($langPath,'/'),'/') . $lang . '/' . $langfile . '.php');
-        if ($this->group != "") {
-            $trans = $transP[$this->group];
-        } else {
-            $trans = $transP;
-        }
-        //$translator = new Translator();
-        //$trans = $translator->get($langfile . $this->group);
-        if (is_array($trans)) {
-            $jsarray = json_encode($trans);
-        } else {
-            $jsarray = $trans;
-        }
-        $this->event->listen("composing: {$this->viewToBind}", function() use ($jsarray, $langfile) {
-            echo "<script>window.{$this->basevar} = window.{$this->basevar} || {};{$this->basevar}.{$langfile} = {$jsarray};</script>";
-        });
-    }
-
-    /**
      * Return the  JavaScript 
      * 
      *
      * @param $langfile The language file to load
-     * @param $group The key in the file to load use . for nesting
+     * @param $group The key in the file to load, use . for nesting
+     * @param $basevar The variable to put de data in javascript
      */
-    public function get($langfile, $group = "") {
-        $lang = $this->app->getLocale();
+    public static function get($langfile, $group = "", $basevar = "") {
+        $viewToBind = config('sirgrimorum.jslocalization.bind_trans_vars_to_this_view', 'layout.app');
+        if ($basevar == "") {
+            $basevar = config('sirgrimorum.jslocalization.default_base_var', 'translations');
+        }
+        if ($group == "") {
+            $group = config('sirgrimorum.jslocalization.trans_group', 'messages');
+        }
+        $lang = App::getLocale();
         $file = new Filesystem();
-        $langPath = config("sirgrimorum.jslocalization.default_lang_path");
-        $transP = $file->getRequire(base_path() . str_start(str_finish($langPath,'/'),'/') . $lang . '/' . $langfile . '.php');
+        $langPath = config("sirgrimorum.jslocalization.default_lang_path", 'resources/lang');
+        $transP = $file->getRequire(base_path() . str_start(str_finish($langPath, '/'), '/') . $lang . '/' . $langfile . '.php');
         if ($group != "") {
             $trans = $transP[$group];
-        } elseif ($this->group != "") {
-            $trans = $transP[$this->group];
+        } elseif ($group != "") {
+            $trans = $transP[group];
         } else {
             $trans = $transP;
         }
@@ -105,7 +87,7 @@ class BindTranslationsToJs {
         } else {
             $jsarray = $trans;
         }
-        return "<script>window.{$this->basevar} = window.{$this->basevar} || {};{$this->basevar}.{$langfile} = {$jsarray};</script>";
+        return "<script>window.{$basevar} = window.{$basevar} || {};{$basevar}.{$langfile} = {$jsarray};</script>";
     }
 
 }

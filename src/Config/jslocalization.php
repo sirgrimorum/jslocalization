@@ -10,7 +10,7 @@ return [
       | you want to prepend the Translation variables to.
       |
      */
-    'bind_trans_vars_to_this_view' => 'layouts.includes.footer',
+    'bind_trans_vars_to_this_view' => 'layout.app',
     /*
       |--------------------------------------------------------------------------
       | Group of the variables to bind
@@ -18,7 +18,7 @@ return [
       |
       |
      */
-    'trans_group' => 'mensajes',
+    'trans_group' => 'messages',
     /*
       |--------------------------------------------------------------------------
       | Default name of the var for translations in js
