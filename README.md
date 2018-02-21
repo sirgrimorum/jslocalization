@@ -65,7 +65,7 @@ The MIT License (MIT). Please see [License File](LICENSE.md) for more informatio
 [ico-downloads]: https://img.shields.io/packagist/dt/sirgrimorum/jslocalization.svg?style=flat-square
 
 [link-packagist]: https://packagist.org/packages/sirgrimorum/jslocalization
-[link-travis]: https://scrutinizer-ci.com/g/sirgrimorum/jslocalization
+[link-travis]: https://scrutinizer-ci.com/g/sirgrimorum/jslocalization/inspections
 [link-scrutinizer]: https://scrutinizer-ci.com/g/sirgrimorum/jslocalization/code-structure
 [link-code-quality]: https://scrutinizer-ci.com/g/sirgrimorum/jslocalization
 [link-downloads]: https://desarrollo.grimorum.com/andres/jslocalization
