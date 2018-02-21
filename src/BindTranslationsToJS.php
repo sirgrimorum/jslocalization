@@ -57,12 +57,11 @@ class BindTranslationsToJs {
      * Return the  JavaScript 
      * 
      *
-     * @param $langfile The language file to load
-     * @param $group The key in the file to load, use . for nesting
-     * @param $basevar The variable to put de data in javascript
+     * @param $langfile String The language file to load
+     * @param $group String The key in the file to load, use . for nesting
+     * @param $basevar String The variable to put de data in javascript
      */
     public static function get($langfile, $group = "", $basevar = "") {
-        $viewToBind = config('sirgrimorum.jslocalization.bind_trans_vars_to_this_view', 'layout.app');
         if ($basevar == "") {
             $basevar = config('sirgrimorum.jslocalization.default_base_var', 'translations');
         }
@@ -75,8 +74,6 @@ class BindTranslationsToJs {
         $transP = $file->getRequire(base_path() . str_start(str_finish($langPath, '/'), '/') . $lang . '/' . $langfile . '.php');
         if ($group != "") {
             $trans = $transP[$group];
-        } elseif ($group != "") {
-            $trans = $transP[group];
         } else {
             $trans = $transP;
         }
