@@ -21,17 +21,17 @@ class JSLocalizationServiceProvider extends ServiceProvider
 
         Blade::directive('jslocalization', function($expression) {
             $auxExpression = explode(',', str_replace(['(', ')', ' ', '"', "'"], '', $expression));
-            if (count($auxExpression)>2){
-                $langfile=$auxExpression[0];
-                $group=$auxExpression[1];
-                $basevar=$auxExpression[2];
-            } elseif (count($auxExpression)>1){
-                $langfile=$auxExpression[0];
-                $group=$auxExpression[1];
+            if (count($auxExpression)>2) {
+                $langfile = $auxExpression[0];
+                $group = $auxExpression[1];
+                $basevar = $auxExpression[2];
+            } elseif (count($auxExpression)>1) {
+                $langfile = $auxExpression[0];
+                $group = $auxExpression[1];
                 $basevar = "";
-            }else{
-                $langfile=$auxExpression[0];
-                $group="";
+            } else {
+                $langfile = $auxExpression[0];
+                $group = "";
                 $basevar = "";
             }
             $translations = new \Sirgrimorum\JSLocalization\BindTranslationsToJs($this->app, config('sirgrimorum.jslocalization.bind_trans_vars_to_this_view', 'layout.app'), config('sirgrimorum.jslocalization.trans_group', 'messages'), config('sirgrimorum.jslocalization.default_base_var', 'translations'));
@@ -46,7 +46,7 @@ class JSLocalizationServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->singleton(BindTranslationsToJs::class, function ($app) {
+        $this->app->singleton(BindTranslationsToJs::class, function($app) {
             $view = config('sirgrimorum.jslocalization.bind_trans_vars_to_this_view', 'welcome');
             $group = config('sirgrimorum.jslocalization.trans_group', 'mensajes');
             $basevar = config('sirgrimorum.jslocalization.default_base_var', 'translations');
