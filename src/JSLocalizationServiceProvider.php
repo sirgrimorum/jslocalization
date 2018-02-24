@@ -6,26 +6,25 @@ use Illuminate\Support\ServiceProvider;
 use Illuminate\Foundation\AliasLoader;
 use Blade;
 
-class JSLocalizationServiceProvider extends ServiceProvider
-{
+class JSLocalizationServiceProvider extends ServiceProvider {
+
     /**
      * Bootstrap services.
      *
      * @return void
      */
-    public function boot()
-    {
+    public function boot() {
         $this->publishes([
             __DIR__ . '/Config/jslocalization.php' => config_path('sirgrimorum/jslocalization.php'),
                 ], 'config');
 
         Blade::directive('jslocalization', function($expression) {
             $auxExpression = explode(',', str_replace(['(', ')', ' ', '"', "'"], '', $expression));
-            if (count($auxExpression)>2) {
+            if (count($auxExpression) > 2) {
                 $langfile = $auxExpression[0];
                 $group = $auxExpression[1];
                 $basevar = $auxExpression[2];
-            } elseif (count($auxExpression)>1) {
+            } elseif (count($auxExpression) > 1) {
                 $langfile = $auxExpression[0];
                 $group = $auxExpression[1];
                 $basevar = "";
@@ -37,6 +36,23 @@ class JSLocalizationServiceProvider extends ServiceProvider
             $translations = new \Sirgrimorum\JSLocalization\BindTranslationsToJs($this->app, config('sirgrimorum.jslocalization.bind_trans_vars_to_this_view', 'layout.app'), config('sirgrimorum.jslocalization.trans_group', 'messages'), config('sirgrimorum.jslocalization.default_base_var', 'translations'));
             return $translations->get($langfile, $group, $basevar);
         });
+        Blade::directive('jsmodel', function($expression) {
+            $auxExpression = explode(',', str_replace(['(', ')', ' ', '"', "'"], '', $expression));
+            //echo "<pre>" . print_r($auxExpression, true) . "</pre>";
+            if (count($auxExpression) > 1) {
+                if ($auxExpression[0] == 'Auth::user') {
+                    $model = \Auth::user();
+                } else {
+                    $model = $auxExpression[0];
+                }
+                $variable = $auxExpression[1];
+            } else {
+                $model = $auxExpression[0];
+                $variable = "";
+            }
+            $translations = new \Sirgrimorum\JSLocalization\BindTranslationsToJs($this->app, config('sirgrimorum.jslocalization.bind_trans_vars_to_this_view', 'layout.app'), config('sirgrimorum.jslocalization.trans_group', 'messages'), config('sirgrimorum.jslocalization.default_base_var', 'translations'));
+            return $translations->put($model, $variable);
+        });
     }
 
     /**
@@ -44,8 +60,7 @@ class JSLocalizationServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function register()
-    {
+    public function register() {
         $this->app->singleton(BindTranslationsToJs::class, function($app) {
             $view = config('sirgrimorum.jslocalization.bind_trans_vars_to_this_view', 'welcome');
             $group = config('sirgrimorum.jslocalization.trans_group', 'mensajes');
@@ -62,4 +77,5 @@ class JSLocalizationServiceProvider extends ServiceProvider
                 __DIR__ . '/Config/jslocalization.php', 'sirgrimorum.jslocalization'
         );
     }
+
 }

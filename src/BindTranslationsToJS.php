@@ -87,4 +87,29 @@ class BindTranslationsToJs {
         return "<script>window.{$basevar} = window.{$basevar} || {};{$basevar}.{$langfile} = {$jsarray};</script>";
     }
 
+    /**
+     * Puth a model in a variable in JavaScript 
+     * 
+     *
+     * @param Model $model The object to load
+     * @param $variable string The name of the variable, if empty, get the object basename
+     */
+    public static function put($model, $variable = "") {
+        if (is_object($model)) {
+            if ($variable == "") {
+                $variable = class_basename(get_class($model));
+            }
+            $jsarray = $model->toJson();
+            return "<script>{$variable} = {$jsarray};</script>";
+        }elseif (is_array($model)) {
+            if ($variable == "") {
+                $variable = "varArray";
+            }
+            $jsarray = json_encode($model);
+            return "<script>{$variable} = {$jsarray};</script>";
+        }else{
+            
+        }
+    }
+
 }
