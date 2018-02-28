@@ -16,13 +16,16 @@
         "laravel/framework": ">=5.4"
     },
     "autoload": {
+        "classmap": [
+            "src"
+        ],
         "psr-4": {
-            "sirgrimorum\\jslocalization\\": "src"
+            "Sirgrimorum\\JSLocalization\\": "src/"
         }
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "1.1.0-dev"
+            "dev-master": "1.1.1-dev"
         },
         "laravel": {
             "providers": [
