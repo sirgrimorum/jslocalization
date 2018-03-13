@@ -40,10 +40,42 @@ class JSLocalizationServiceProvider extends ServiceProvider {
             $auxExpression = explode(',', str_replace(['(', ')', ' ', '"', "'"], '', $expression));
             //echo "<pre>" . print_r($auxExpression, true) . "</pre>";
             if (count($auxExpression) > 1) {
-                if ($auxExpression[0] == 'Auth::user') {
+                if ($auxExpression[0] == 'Auth::user()') {
                     $model = \Auth::user();
                 } else {
-                    $model = $auxExpression[0];
+                    if (stripos($auxExpression[0], "::") !== false) {
+                        list($base, $comando) = explode("::", $auxExpression[0]);
+                        if (stripos($auxExpression[0], "->") !== false) {
+                            $comandos = explode("->", $comando);
+                            $cuenta = 0;
+                            foreach ($comandos as $subComando) {
+                                if (stripos($subComando, "()") !== false) {
+                                    $subComando = str_replace("()", "", $subComando);
+                                    if ($cuenta == 0) {
+                                        $model = $base::{$subComando}();
+                                    } else {
+                                        $model = $model->{$subComando}();
+                                    }
+                                } else {
+                                    if ($cuenta == 0) {
+                                        $model = $base::$subComando;
+                                    } else {
+                                        $model = $model->$subComando;
+                                    }
+                                }
+                                $cuenta++;
+                            }
+                        } else {
+                            if (stripos($comando, "()") !== false) {
+                                $comando = str_replace("()", "", $comando);
+                                $model = $base::{$comando}();
+                            } else {
+                                $model = $base::$comando;
+                            }
+                        }
+                    } else {
+                        $model = $auxExpression[0];
+                    }
                 }
                 $variable = $auxExpression[1];
             } else {
