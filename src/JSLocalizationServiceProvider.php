@@ -19,7 +19,7 @@ class JSLocalizationServiceProvider extends ServiceProvider {
                 ], 'config');
 
         Blade::directive('jslocalization', function($expression) {
-            $auxExpression = explode(',', str_replace(['(', ')', ' ', '"', "'"], '', $expression));
+            $auxExpression = explode(',', str_replace([' ', '"', "'"], '', $expression));
             if (count($auxExpression) > 2) {
                 $langfile = $auxExpression[0];
                 $group = $auxExpression[1];
