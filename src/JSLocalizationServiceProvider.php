@@ -19,7 +19,7 @@ class JSLocalizationServiceProvider extends ServiceProvider {
                 ], 'config');
 
         Blade::directive('jslocalization', function($expression) {
-            $auxExpression = explode(',', str_replace([' ', '"', "'"], '', $expression));
+            $auxExpression = explode(',', str_replace(['(', ')', ' ', '"', "'"], '', $expression));
             if (count($auxExpression) > 2) {
                 $langfile = $auxExpression[0];
                 $group = $auxExpression[1];
@@ -37,7 +37,7 @@ class JSLocalizationServiceProvider extends ServiceProvider {
             return $translations->get($langfile, $group, $basevar);
         });
         Blade::directive('jsmodel', function($expression) {
-            $auxExpression = explode(',', str_replace(['(', ')', ' ', '"', "'"], '', $expression));
+            $auxExpression = explode(',', str_replace([' ', '"', "'"], '', $expression));
             //echo "<pre>" . print_r($auxExpression, true) . "</pre>";
             if (count($auxExpression) > 1) {
                 if ($auxExpression[0] == 'Auth::user()') {
