@@ -108,7 +108,7 @@ class BindTranslationsToJs {
             $jsarray = json_encode($model);
             return "<script>{$variable} = {$jsarray};</script>";
         }else{
-            
+            return "<script>{$variable} = '';</script>";
         }
     }
 
