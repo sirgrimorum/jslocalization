@@ -16,16 +16,17 @@ Via Composer
 ``` bash
 $ composer require sirgrimorum/jslocalization
 ```
-Publish Configuration
+
+OPTIONAL: Publish Configuration
 
 ``` bash
 $php artisan vendor:publish --tag=config
 ```
 
-## Usage
+## Usage for localized strings
 
 ``` html
-{!! JSLocalization::get("admin","messages","transmessages") !!}
+{!! JSLocalization::get("admin","messages","transmensajes") !!}
 <script>
     (function() {
         alert(transmensajes.admin.error);
@@ -33,7 +34,7 @@ $php artisan vendor:publish --tag=config
 </script>
 ```
 
-## Blade directives
+Or with blade directives
 
 ``` html
 @jslocalization("admin","error_messages","error")
@@ -43,6 +44,41 @@ $php artisan vendor:publish --tag=config
     })();
 </script>
 ```
+
+Using blade directives, remember to clear de view:cache after each change in the localization files:
+
+``` bash
+$php artisan view:clear
+```
+
+## Usage for models, objects, arrays and collections
+
+``` html
+{!! JSLocalization::put(Auth::user(),"currentUser") !!}
+<script>
+    (function() {
+        alert(currentUser.id);
+    })();
+</script>
+```
+
+Or with blade directives
+
+``` html
+@jsmodel(Auth::user(),"currentUser")
+<script>
+    (function() {
+        alert(currentUser.id);
+    })();
+</script>
+```
+
+Using blade directives, remember to clear de view:cache after each change in the localization files:
+
+``` bash
+$php artisan view:clear
+```
+
 
 ## Security
 
