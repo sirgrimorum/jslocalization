@@ -71,7 +71,7 @@ class BindTranslationsToJs {
         $lang = App::getLocale();
         $file = new Filesystem();
         $langPath = config("sirgrimorum.jslocalization.default_lang_path", 'resources/lang');
-        $transP = $file->getRequire(base_path() . str_start(str_finish($langPath, '/'), '/') . $lang . '/' . $langfile . '.php');
+        $transP = $file->getRequire(base_path() . \Illuminate\Support\Str::start(\Illuminate\Support\Str::finish($langPath, '/'), '/') . $lang . '/' . $langfile . '.php');
         if ($group != "") {
             $trans = $transP[$group];
         } else {
