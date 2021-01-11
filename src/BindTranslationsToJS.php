@@ -4,8 +4,7 @@ namespace Sirgrimorum\JSLocalization;
 
 use Illuminate\Events\Dispatcher;
 use Illuminate\Filesystem\Filesystem;
-use Illuminate\Support\Facades\Event;
-use Exception;
+use Illuminate\Support\Str;
 use App;
 
 class BindTranslationsToJs {
@@ -71,7 +70,7 @@ class BindTranslationsToJs {
         $lang = App::getLocale();
         $file = new Filesystem();
         $langPath = config("sirgrimorum.jslocalization.default_lang_path", 'resources/lang');
-        $transP = $file->getRequire(base_path() . \Illuminate\Support\Str::start(\Illuminate\Support\Str::finish($langPath, '/'), '/') . $lang . '/' . $langfile . '.php');
+        $transP = $file->getRequire(base_path() . Str::start(Str::finish($langPath, '/'), '/') . $lang . '/' . $langfile . '.php');
         if ($group != "") {
             $trans = $transP[$group];
         } else {
