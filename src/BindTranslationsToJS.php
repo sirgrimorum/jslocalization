@@ -4,8 +4,8 @@ namespace Sirgrimorum\JSLocalization;
 
 use Illuminate\Events\Dispatcher;
 use Illuminate\Filesystem\Filesystem;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Str;
-use App;
 
 class BindTranslationsToJs {
 
