@@ -4,7 +4,7 @@ namespace Sirgrimorum\JSLocalization;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Foundation\AliasLoader;
-use Blade;
+use Illuminate\Support\Facades\Blade;
 
 class JSLocalizationServiceProvider extends ServiceProvider {
 

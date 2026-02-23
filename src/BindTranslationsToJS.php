@@ -5,7 +5,9 @@ namespace Sirgrimorum\JSLocalization;
 use Illuminate\Events\Dispatcher;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Str;
+use Exception;
 
 class BindTranslationsToJs {
 
@@ -107,7 +109,7 @@ class BindTranslationsToJs {
             $jsarray = json_encode($model);
             return "<script>{$variable} = {$jsarray};</script>";
         }else{
-            return "<script>{$variable} = '';</script>";
+            
         }
     }
 
