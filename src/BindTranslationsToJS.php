@@ -66,8 +66,8 @@ class BindTranslationsToJs {
         if ($basevar == "") {
             $basevar = config('sirgrimorum.jslocalization.default_base_var', 'translations');
         }
-        if ($group === null) {
-            $group = config('sirgrimorum.jslocalization.trans_group', '');
+        if ($group === null || $group === "") {
+            $group = config('sirgrimorum.jslocalization.trans_group', 'messages');
         }
         $lang = App::getLocale();
         $file = new Filesystem();
