@@ -62,12 +62,12 @@ class BindTranslationsToJs {
      * @param $group String The key in the file to load, use . for nesting
      * @param $basevar String The variable to put de data in javascript
      */
-    public static function get($langfile, $group = "", $basevar = "") {
+    public static function get($langfile, $group = null, $basevar = "") {
         if ($basevar == "") {
             $basevar = config('sirgrimorum.jslocalization.default_base_var', 'translations');
         }
-        if ($group == "") {
-            $group = config('sirgrimorum.jslocalization.trans_group', 'messages');
+        if ($group === null) {
+            $group = config('sirgrimorum.jslocalization.trans_group', '');
         }
         $lang = App::getLocale();
         $file = new Filesystem();
