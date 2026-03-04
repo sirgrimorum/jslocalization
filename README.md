@@ -1,109 +1,168 @@
-# SirGrimorum's JSLocalization
+# JSLocalization
 
-[![Latest Version on Packagist][ico-version]][link-packagist]
-[![Software License][ico-license]](LICENSE.md)
-[![Build Status][ico-travis]][link-travis]
-[![Coverage Status][ico-scrutinizer]][link-scrutinizer]
-[![Quality Score][ico-code-quality]][link-code-quality]
-[![Total Downloads][ico-downloads]][link-downloads]
+![Latest Version on Packagist](https://img.shields.io/packagist/v/sirgrimorum/jslocalization.svg?style=flat-square)
+![PHP Version](https://img.shields.io/packagist/php-v/sirgrimorum/jslocalization.svg?style=flat-square)
+![Total Downloads](https://img.shields.io/packagist/dt/sirgrimorum/jslocalization.svg?style=flat-square)
+![License](https://img.shields.io/packagist/l/sirgrimorum/jslocalization.svg?style=flat-square)
 
-Put localization arrays in JavaScript for Laravel 5.6.
+Expose Laravel translation files and Eloquent models to JavaScript with a single line. Bind PHP i18n arrays to `window` globals so your frontend code shares the same translations and data as your backend — no AJAX calls, no duplication.
 
-## Install
+## Features
 
-Via Composer
+- **Translation binding** — publish any Laravel language file to a JavaScript global variable
+- **Model/collection binding** — serialize any Eloquent model, collection, or array to a JavaScript variable
+- **Nested JS object creation** — nested groups are created safely without clobbering existing keys
+- **Static method support** — call `Auth::user()`, method chains, or static properties directly from the Blade directive
+- **Zero configuration required** — works out of the box with sensible defaults
 
-``` bash
-$ composer require sirgrimorum/jslocalization
+## Requirements
+
+- PHP >= 8.2
+- Laravel >= 9.0
+
+## Installation
+
+```bash
+composer require sirgrimorum/jslocalization
 ```
 
-OPTIONAL: Publish Configuration
+### Publish configuration (optional)
 
-``` bash
-$php artisan vendor:publish --tag=config
+```bash
+php artisan vendor:publish --provider="Sirgrimorum\JSLocalization\JSLocalizationServiceProvider" --tag=config
 ```
 
-## Usage for localized strings
+Publishes `config/sirgrimorum/jslocalization.php`.
 
-``` html
-{!! JSLocalization::get("admin","messages","transmensajes") !!}
+## Configuration
+
+`config/sirgrimorum/jslocalization.php`
+
+```php
+return [
+    // View that receives the injected <script> tags (used for auto-injection)
+    'bind_trans_vars_to_this_view' => 'layouts.app',
+
+    // Default lang group to expose (the array key inside the language file)
+    'trans_group' => 'messages',
+
+    // Global JS variable name that holds all translations
+    'default_base_var' => 'translations',
+
+    // Path to language files
+    'default_lang_path' => '/resources/lang/',
+];
+```
+
+## Usage
+
+### Bind a translation file to JavaScript
+
+```blade
+{{-- Exposes resources/lang/{locale}/messages.php as window.translations.messages --}}
+@jslocalization('messages')
+
+{{-- Expose only a specific group within the file --}}
+@jslocalization('messages', 'errors')
+
+{{-- Use a custom JS variable name --}}
+@jslocalization('messages', 'errors', 'myApp')
+```
+
+The directive outputs a `<script>` tag:
+
+```html
 <script>
-    (function() {
-        alert(transmensajes.admin.error);
-    })();
+window.translations = window.translations || {};
+translations.messages = { "welcome": "Welcome!", "errors": { ... } };
 </script>
 ```
 
-Or with blade directives
+### Use translations in JavaScript
 
-``` html
-@jslocalization("admin","error_messages","error")
+```js
+// After @jslocalization('messages')
+console.log(translations.messages.welcome);  // "Welcome!"
+alert(translations.messages.errors.not_found); // "Not found"
+```
+
+### Bind a model to JavaScript
+
+```blade
+{{-- Serialize the authenticated user --}}
+@jsmodel('Auth::user()')
+
+{{-- Custom variable name --}}
+@jsmodel('Auth::user()', 'currentUser')
+
+{{-- Method chains --}}
+@jsmodel('Auth::user()->profile()', 'userProfile')
+
+{{-- Static property --}}
+@jsmodel('App\Models\Setting::$defaults', 'appDefaults')
+```
+
+Output:
+
+```html
 <script>
-    (function() {
-        alert(error.error_messages.permissions);
-    })();
+currentUser = {"id":1,"name":"Alice","email":"alice@example.com"};
 </script>
 ```
 
-Using blade directives, remember to clear de view:cache after each change in the localization files:
+### Bind any variable from PHP
 
-``` bash
-$php artisan view:clear
+You can also pass variables directly using the facade:
+
+```php
+// In a controller or view composer
+$script = JSLocalization::get('messages', 'errors');    // returns <script>...</script>
+$script = JSLocalization::put($collection, 'myData');   // serialize a collection
+echo $script;
 ```
 
-## Usage for models, objects, arrays and collections
+## API Reference
 
-``` html
-{!! JSLocalization::put(Auth::user(),"currentUser") !!}
-<script>
-    (function() {
-        alert(currentUser.id);
-    })();
-</script>
+### `JSLocalization::get()`
+
+```php
+JSLocalization::get(
+    string $langfile,       // Language file name (without .php extension)
+    string $group   = '',   // Optional key within the file to expose
+    string $basevar = ''    // JS global variable (default: config 'default_base_var')
+): string
 ```
 
-Or with blade directives
+Returns a `<script>` tag that assigns the translation array to `window.{basevar}.{langfile}`.
 
-``` html
-@jsmodel(Auth::user(),"currentUser")
-<script>
-    (function() {
-        alert(currentUser.id);
-    })();
-</script>
+### `JSLocalization::put()`
+
+```php
+JSLocalization::put(
+    mixed  $model,          // Eloquent model, collection, array, or object
+    string $variable = ''   // JS variable name (default: class basename)
+): string
 ```
 
-Using blade directives, remember to clear de view:cache after each change in the localization files:
+Returns a `<script>` tag that assigns the JSON-encoded value to a global variable.
 
-``` bash
-$php artisan view:clear
+### Blade directive — `@jslocalization`
+
+```blade
+@jslocalization(string $langfile, string $group = '', string $basevar = '')
 ```
 
+### Blade directive — `@jsmodel`
 
-## Security
+```blade
+@jsmodel(string $expression, string $variable = '')
+```
 
-If you discover any security related issues, please email andres.espinosa@grimorum.com instead of using the issue tracker.
-
-## Credits
-
-- SirGrimorum [link-author]
-- Grimorum Ltda. [link-contributors]
+`$expression` can be:
+- A static method call: `'Auth::user()'`
+- A method chain: `'Auth::user()->roles()'`
+- A static property: `'App\Models\Config::$defaults'`
 
 ## License
 
-The MIT License (MIT). Please see [License File](LICENSE.md) for more information.
-
-[ico-version]: https://img.shields.io/packagist/v/sirgrimorum/jslocalization.svg
-[ico-license]: https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square
-[ico-travis]: https://img.shields.io/scrutinizer/build/g/sirgrimorum/jslocalization.svg?style=flat-square
-[ico-scrutinizer]: https://img.shields.io/scrutinizer/coverage/g/sirgrimorum/jslocalization.svg?style=flat-square
-[ico-code-quality]: https://img.shields.io/scrutinizer/g/sirgrimorum/jslocalization.svg?style=flat-square
-[ico-downloads]: https://img.shields.io/packagist/dt/sirgrimorum/jslocalization.svg?style=flat-square
-
-[link-packagist]: https://packagist.org/packages/sirgrimorum/jslocalization
-[link-travis]: https://scrutinizer-ci.com/g/sirgrimorum/jslocalization/inspections
-[link-scrutinizer]: https://scrutinizer-ci.com/g/sirgrimorum/jslocalization/code-structure
-[link-code-quality]: https://scrutinizer-ci.com/g/sirgrimorum/jslocalization
-[link-downloads]: https://desarrollo.grimorum.com/andres/jslocalization
-[link-author]: https://github.com/sirgrimorum
-[link-contributors]: http://grimorum.com
+The MIT License (MIT). See [LICENSE](LICENSE).
